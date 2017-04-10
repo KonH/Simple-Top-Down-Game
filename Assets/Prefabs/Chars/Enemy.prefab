@@ -225,6 +225,8 @@ MonoBehaviour:
   TrackPlayer: 0
   DetectDistance: 5
   SleepTime: 5
+  MinMoveDelta: 0.01
+  MoveCheckTime: 0.25
 --- !u!212 &212088316735735418
 SpriteRenderer:
   m_ObjectHideFlags: 1

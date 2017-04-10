@@ -7,10 +7,14 @@ public class Enemy : MonoBehaviour, IStateHolder {
 	public bool  TrackPlayer    = false;
 	public float DetectDistance = 0;
 	public float SleepTime      = 0;
+	public float MinMoveDelta   = 0;
+	public float MoveCheckTime  = 0;
 
 	Movable        _movable       = null;
 	float          _idleTimer     = 0;
+	float          _moveTimer     = 0;
 	RaycastHit2D[] _raycastResult = new RaycastHit2D[64];
+	Vector3        _prevPosition  = Vector3.zero;
 
 	float RandomComp {
 		get {
@@ -27,6 +31,7 @@ public class Enemy : MonoBehaviour, IStateHolder {
 	void Start() {
 		_movable = GetComponent<Movable>();
 		_idleTimer = IdleTime;
+		_prevPosition = transform.position;
 	}
 
 	void Update() {
@@ -71,7 +76,8 @@ public class Enemy : MonoBehaviour, IStateHolder {
 	}
 
 	void UpdateIdle() {
-		if ( _idleTimer > IdleTime ) {
+		var isNotMoved = CheckNotMoved();
+		if ( (_idleTimer > IdleTime) || isNotMoved ) {
 			SetupRandomMove();
 			_idleTimer = 0;
 		} else {
@@ -79,8 +85,28 @@ public class Enemy : MonoBehaviour, IStateHolder {
 		}
 	}
 
+	bool CheckNotMoved() {
+		if ( _moveTimer > MoveCheckTime ) {
+			var isNotMoved = IsNotMoved();
+			_prevPosition = transform.position;
+			_moveTimer = 0;
+			return isNotMoved;
+		} else {
+			_moveTimer += Time.deltaTime;
+		}
+		return false;
+	}
+
+	bool IsNotMoved() {
+		var distance = Mathf.Abs((_prevPosition - transform.position).sqrMagnitude);
+		var isNotMoved = distance <= MinMoveDelta;
+		return isNotMoved;
+	}
+
 	void SetupRandomMove() {
-		_movable.MoveVector = new Vector2(RandomComp, RandomComp);
+		var xy = Random.value > 0.5f;
+		var value = RandomComp;
+		_movable.MoveVector = new Vector2(xy ? value : 0, !xy ? value : 0);
 	}
 
 	public void Sleep() {
