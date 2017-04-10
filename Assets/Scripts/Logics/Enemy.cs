@@ -1,13 +1,12 @@
 ﻿using UnityEngine;
 
 [RequireComponent(typeof(Movable))]
-public class Enemy : MonoBehaviour {
+public class Enemy : MonoBehaviour, IStateHolder {
 
 	public float IdleTime       = 5.0f;
 	public bool  TrackPlayer    = false;
 	public float DetectDistance = 0;
-
-	public GameObject AttackMarker = null;
+	public float SleepTime      = 0;
 
 	Movable        _movable       = null;
 	float          _idleTimer     = 0;
@@ -17,6 +16,12 @@ public class Enemy : MonoBehaviour {
 		get {
 			return Random.value * 2 - 1;
 		}
+	}
+
+	public State State { get; private set; }
+
+	void Awake() {
+		State = State.Idle;
 	}
 
 	void Start() {
@@ -29,7 +34,7 @@ public class Enemy : MonoBehaviour {
 		if ( !TrackPlayer ) {
 			UpdateIdle();
 		}
-		AttackMarker.SetActive(TrackPlayer);
+		State = TrackPlayer ? State.Attack : State.Idle;
 	}
 
 	void OnDrawGizmos() {
@@ -76,5 +81,17 @@ public class Enemy : MonoBehaviour {
 
 	void SetupRandomMove() {
 		_movable.MoveVector = new Vector2(RandomComp, RandomComp);
+	}
+
+	public void Sleep() {
+		Invoke("Resume", SleepTime);
+		_movable.MoveVector = Vector3.zero;
+		State = State.Sleep;
+		enabled = false;
+	}
+
+	void Resume() {
+		State = State.Idle;
+		enabled = true;
 	}
 }

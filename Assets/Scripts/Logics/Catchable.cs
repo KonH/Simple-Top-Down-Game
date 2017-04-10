@@ -4,9 +4,13 @@
 public class Catchable : MonoBehaviour {
 
 	void OnCollisionEnter2D(Collision2D collision) {
-		if ( collision.transform.CompareTag(GameManager.EnemyTag) ) {
-			GameManager.Instance.OnCatch();
-			enabled = false;
+		var go = collision.gameObject;
+		if ( go.CompareTag(GameManager.EnemyTag) ) {
+			var enemy = go.GetComponent<Enemy>();
+			if ( enemy.enabled ) {
+				GameManager.Instance.OnCatch();
+				enabled = false;
+			}
 		}
 	}
 }
