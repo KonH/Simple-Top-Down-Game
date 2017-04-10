@@ -3,8 +3,11 @@
 [RequireComponent(typeof(Movable))]
 public class Enemy : MonoBehaviour {
 
-	public float IdleTime    = 5.0f;
-	public bool  TrackPlayer = false;
+	public float IdleTime       = 5.0f;
+	public bool  TrackPlayer    = false;
+	public float DetectDistance = 0;
+
+	public GameObject AttackMarker = null;
 
 	Movable        _movable       = null;
 	float          _idleTimer     = 0;
@@ -26,6 +29,12 @@ public class Enemy : MonoBehaviour {
 		if ( !TrackPlayer ) {
 			UpdateIdle();
 		}
+		AttackMarker.SetActive(TrackPlayer);
+	}
+
+	void OnDrawGizmos() {
+		Gizmos.color = Color.yellow;
+		Gizmos.DrawWireSphere(transform.position, DetectDistance);
 	}
 
 	Vector2 GetDirection(Transform target) {
@@ -36,18 +45,22 @@ public class Enemy : MonoBehaviour {
 		var target = EnemyTarget.Instance;
 		if ( target ) {
 			var direction = GetDirection(target.transform);
-			var resultCount = Physics2D.RaycastNonAlloc(transform.position, direction, _raycastResult);
+			var resultCount = Physics2D.RaycastNonAlloc(transform.position, direction, _raycastResult, DetectDistance);
+			var tracked = false;
 			for ( int i = 0; i < resultCount; i++ ) {
 				var result = _raycastResult[i];
 				if ( result.transform.CompareTag(GameManager.WallTag) ) {
 					return false;
 				}
 				if ( result.transform == target.transform ) {
+					tracked = true;
 					break;
 				}
 			}
-			_movable.MoveVector = direction;
-			return true;
+			if ( tracked ) {
+				_movable.MoveVector = direction;
+				return true;
+			}
 		}
 		return false;
 	}
