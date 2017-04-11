@@ -1,14 +1,32 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 public class PlayerDoor : MonoBehaviour, IStateHolder {
 
+	public GameObject LockedMarker = null;
+	public string     ItemFilter   = null;
+
 	public State State { get; private set; }
+
+	bool IsLocked {
+		get { return !string.IsNullOrEmpty(ItemFilter); }
+	}
+
+	bool CanOpen {
+		get {
+			if ( IsLocked ) {
+				var collector = Collector.Instance;
+				if ( collector ) {
+					return collector.Has(ItemFilter);
+				}
+				return false;
+			}
+			return true;
+		}
+	}
 
 	void Awake() {
 		Close();
-	}
-
-	void Start() {
+		LockedMarker.SetActive(IsLocked);
 	}
 
 	bool IsPlayer(Collider2D collider) {
@@ -29,7 +47,9 @@ public class PlayerDoor : MonoBehaviour, IStateHolder {
 	}
 
 	void Open() {
-		State = State.Open;
+		if ( CanOpen ) {
+			State = State.Open;
+		}
 	}
 
 	void Close() {
