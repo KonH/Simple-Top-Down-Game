@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 [RequireComponent(typeof(Movable))]
 public class Enemy : MonoBehaviour, IStateHolder {
@@ -15,12 +15,6 @@ public class Enemy : MonoBehaviour, IStateHolder {
 	float          _moveTimer     = 0;
 	RaycastHit2D[] _raycastResult = new RaycastHit2D[64];
 	Vector3        _prevPosition  = Vector3.zero;
-
-	float RandomComp {
-		get {
-			return Random.value * 2 - 1;
-		}
-	}
 
 	public State State { get; private set; }
 
@@ -105,7 +99,7 @@ public class Enemy : MonoBehaviour, IStateHolder {
 
 	void SetupRandomMove() {
 		var xy = Random.value > 0.5f;
-		var value = RandomComp;
+		var value = Random.value > 0.5f ? 1 : -1;
 		_movable.MoveVector = new Vector2(xy ? value : 0, !xy ? value : 0);
 	}
 
