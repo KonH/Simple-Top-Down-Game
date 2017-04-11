@@ -1,9 +1,10 @@
-﻿using UnityEngine.SceneManagement;
+using UnityEngine.SceneManagement;
 
 public class GameManager {
-	public const string WallTag  = "Wall";
-	public const string EnemyTag = "Enemy";
-	public const string TrapTag  = "Trap";
+	public const string PlayerTag = "Player";
+	public const string WallTag   = "Wall";
+	public const string EnemyTag  = "Enemy";
+	public const string TrapTag   = "Trap";
 
 	static GameManager _instance = null;
 
