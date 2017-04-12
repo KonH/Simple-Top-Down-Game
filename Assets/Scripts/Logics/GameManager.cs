@@ -21,6 +21,10 @@ public class GameManager {
 		Restart();
 	}
 
+	public void OnExit() {
+		Restart();
+	}
+
 	void Restart() {
 		SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
 	}
