@@ -4,5 +4,7 @@ public enum State {
 	Sleep = 2,
 	Attack = 3,
 	Open = 4,
-	Closed = 5
+	Closed = 5,
+	On = 6,
+	Off = 7
 }

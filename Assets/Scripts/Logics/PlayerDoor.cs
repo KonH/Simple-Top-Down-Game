@@ -4,6 +4,7 @@ public class PlayerDoor : MonoBehaviour, IStateHolder {
 
 	public GameObject LockedMarker = null;
 	public string     ItemFilter   = null;
+	public bool       Automatic    = true;
 
 	public State State { get; private set; }
 
@@ -35,24 +36,24 @@ public class PlayerDoor : MonoBehaviour, IStateHolder {
 	}
 
 	void OnTriggerEnter2D(Collider2D collision) {
-		if ( IsPlayer(collision) ) {
+		if ( Automatic && IsPlayer(collision) ) {
 			Open();
 		}
 	}
 
 	void OnTriggerExit2D(Collider2D collision) {
-		if ( IsPlayer(collision) ) {
+		if ( Automatic && IsPlayer(collision) ) {
 			Close();
 		}
 	}
 
-	void Open() {
+	public void Open() {
 		if ( CanOpen ) {
 			State = State.Open;
 		}
 	}
 
-	void Close() {
+	public void Close() {
 		State = State.Closed;
 	}
 }
